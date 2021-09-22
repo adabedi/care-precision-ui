@@ -1,3 +1,4 @@
+import { keysToCamel } from './formatters';
 export class ResponseError extends Error {
   public response: Response;
 
@@ -54,5 +55,6 @@ export async function request(
 ): Promise<{} | { err: ResponseError }> {
   const fetchResponse = await fetch(url, options);
   const response = checkStatus(fetchResponse);
-  return parseJSON(response);
+  const json = parseJSON(response);
+  return keysToCamel(json);
 }
