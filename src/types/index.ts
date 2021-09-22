@@ -1,6 +1,5 @@
 import { RootState } from './RootState';
-import { tPatientsList } from './PatientsList';
 import { IAssessmentIcons } from './AssessmentIcons';
-import { IPatient } from './PatientDemographic';
+import { PatientDemographic } from './Patient/PatientDemographic';
 
-export type { RootState, tPatientsList, IAssessmentIcons, IPatient };
+export type { RootState, IAssessmentIcons, PatientDemographic };

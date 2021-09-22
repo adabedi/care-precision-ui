@@ -2,47 +2,49 @@ import PATIENT_LIST, { searchByNameOrNhs } from './PatientList';
 import ASSESSMENTS_RESULT from './AssessmentsResults';
 import COVID_MANAGEMENT from './CovidMenagment';
 import TASKS from './TasksList';
+import { keysToCamel } from 'utils/formatters';
+import { SortDir, SortKey } from 'app/containers/PatientList/types';
 
 export const fake = {
   COVID_MANAGEMENT,
-  PATIENT_LIST,
+  PATIENT_LIST: keysToCamel(PATIENT_LIST),
   ASSESSMENTS_RESULT,
   TASKS,
 };
 
 export { searchByNameOrNhs };
-const checkByASC = (a, b, key) => {
-  if (a.assessment[`${key}`]?.value && !b.assessment[`${key}`]?.value) {
-    return true;
-  }
-  if (!a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
-    return false;
-  }
-  if (a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
-    return a.assessment[`${key}`].value > b.assessment[`${key}`].value;
-  }
-  return false;
-};
+// const checkByASC = (a, b, key) => {
+//   if (a.assessment[`${key}`]?.value && !b.assessment[`${key}`]?.value) {
+//     return true;
+//   }
+//   if (!a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
+//     return false;
+//   }
+//   if (a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
+//     return a.assessment[`${key}`].value > b.assessment[`${key}`].value;
+//   }
+//   return false;
+// };
 
-const checkOrder = (a, b, sort) => {
-  const { key, value } = sort;
-  const ASC = 'ASC';
-  const sortedASC = checkByASC(a, b, key);
-  return value === ASC ? sortedASC : !sortedASC;
-};
+// const checkOrder = (a, b, sort) => {
+//   const { key, value } = sort;
+//   const ASC = 'ASC';
+//   const sortedASC = checkByASC(a, b, key);
+//   return value === ASC ? sortedASC : !sortedASC;
+// };
 
-const sortByAsssessmentValue = (unsorted, sort) =>
-  unsorted.reduce((sorted, el) => {
-    let index = 0;
-    while (index < sorted.length && checkOrder(el, sorted[index], sort))
-      index++;
-    sorted.splice(index, 0, el);
-    return sorted;
-  }, []);
+// const sortByAsssessmentValue = (unsorted, sort) =>
+//   unsorted.reduce((sorted, el) => {
+//     let index = 0;
+//     while (index < sorted.length && checkOrder(el, sorted[index], sort))
+//       index++;
+//     sorted.splice(index, 0, el);
+//     return sorted;
+//   }, []);
 
 const checkOrderByAge = (a, b, order) => {
   const sortedASC = a.birthdate > b.birthdate;
-  return order === 'ASC' ? sortedASC : !sortedASC;
+  return order === SortDir.ASC ? sortedASC : !sortedASC;
 };
 
 const sortByAge = (unsorted, order) =>
@@ -68,17 +70,20 @@ const SortByName = unsorted => {
   });
 };
 
-export const sort = (arrayToSort, params) => {
-  const { value, key } = params;
-  if (key === 'news2' || key === 'denwis') {
-    return sortByAsssessmentValue(arrayToSort, params);
-  }
-  if (key === 'name') {
+export const sort = (
+  arrayToSort,
+  params: { sortKey: SortKey; sortDir: SortDir },
+) => {
+  const { sortKey, sortDir } = params;
+  // if (key === 'news2' || key === 'denwis') {
+  //   return sortByAsssessmentValue(arrayToSort, params);
+  // }
+  if (sortKey === SortKey.NAME) {
     const sorted = SortByName(arrayToSort);
-    return key === 'ASC' ? sorted : sorted.reverse();
+    return sortDir === SortDir.ASC ? sorted : sorted.reverse();
   }
-  if (key === 'birthdate') {
-    return sortByAge(arrayToSort, value);
+  if (sortKey === SortKey.BIRTH_DATE) {
+    return sortByAge(arrayToSort, sortDir);
   }
   return arrayToSort;
 };
