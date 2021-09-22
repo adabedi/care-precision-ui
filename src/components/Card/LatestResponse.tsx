@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Box } from '@material-ui/core';
-// import { useHistory } from 'react-router-dom';
 import { useStylesLastResponse } from './style';
 import DenwisIcon from '../DenwisIcon';
 import News2Icon from '../News2Icon';
@@ -9,8 +8,7 @@ import SepsisIcon from '../SepsisIcon';
 
 const LatestResponse = ({ assessments, sm, id }) => {
   const classes = useStylesLastResponse();
-  // const history = useHistory();
-  // const goToCovid = () => history.push(`/covid-management/${id}`);
+
   return (
     <Box mr={1}>
       <Grid
@@ -19,22 +17,22 @@ const LatestResponse = ({ assessments, sm, id }) => {
         alignItems="center"
         {...(sm ? { className: classes.container } : {})}
       >
-        {assessments?.denwis?.value && (
+        {assessments?.denwis && (
           <Grid item>
-            <DenwisIcon label denwis={assessments?.denwis?.value} />
+            <DenwisIcon label denwis={assessments.denwis} />
           </Grid>
         )}
-        {assessments?.sepsis?.value && (
+        {assessments?.sepsis && (
           <>
             <Grid item>
-              <SepsisIcon label value={assessments?.sepsis?.value} />
+              <SepsisIcon label value={assessments.sepsis} />
             </Grid>
           </>
         )}
-        {assessments?.news2?.value && (
+        {assessments?.news2 && (
           <>
             <Grid item>
-              <News2Icon label news2={assessments?.news2?.value} />
+              <News2Icon label news2={assessments.news2} />
             </Grid>
           </>
         )}

@@ -7,7 +7,6 @@ const CovidIcon: React.FC<{ value: any; label?: boolean; small?: boolean }> = ({
   label = false,
   small,
 }) => {
-  console.log('small', small);
   return (
     <IconButton
       onClick={() => console.log('a')}

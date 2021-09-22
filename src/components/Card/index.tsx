@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { IAssessmentIcons } from 'types';
-
 import {
   CardHeader,
   CardActions,
@@ -22,6 +20,13 @@ import clsx from 'clsx';
 
 import NewCareEventDialog from '../NewCareEventDialog';
 import LatestResponse from './LatestResponse';
+import {
+  COVIDSummary,
+  DENWISSummary,
+  NEWS2Summary,
+  SepsisSummary,
+} from 'types/AssessmentSummary';
+import styled from 'styled-components';
 
 const Record = withStyles({
   root: {
@@ -36,7 +41,12 @@ interface Props {
   identifier?: string;
   id?: string;
   children?: JSX.Element;
-  assesments?: IAssessmentIcons;
+  assesments?: {
+    denwis?: DENWISSummary;
+    covid?: COVIDSummary;
+    news2?: NEWS2Summary;
+    sepsis?: SepsisSummary;
+  };
 }
 
 const Card: React.FC<Props> = ({
@@ -68,34 +78,16 @@ const Card: React.FC<Props> = ({
         <CardHeader
           title={
             <CardActionArea onClick={redirectToPatientOverview}>
-              <Typography
-                variant="h5"
-                display="block"
-                style={{
-                  fontSize: '1.25rem',
-                  fontFamily: "'Cabin', sans-serif",
-                  fontWeight: 400,
-                  lineHeight: '1.334',
-                }}
-              >
+              <CardTitleTypography variant="h5" display="block">
                 {name}
-              </Typography>
+              </CardTitleTypography>
             </CardActionArea>
           }
           subheader={
             <CardActionArea onClick={redirectToPatientOverview}>
-              <Typography
-                style={{
-                  fontSize: '1rem',
-                  fontFamily: "'Cabin', sans-serif",
-                  fontWeight: 400,
-                  lineHeight: '1.5',
-                }}
-                variant="body1"
-                color="textSecondary"
-              >
+              <CardSubheaderTypography variant="body1" color="textSecondary">
                 {identifier}
-              </Typography>
+              </CardSubheaderTypography>
             </CardActionArea>
           }
           action={
@@ -136,3 +128,14 @@ const Card: React.FC<Props> = ({
 
 export default Card;
 export * from './Record';
+
+const CardTitleTypography = styled(Typography)`
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.334;
+`;
+const CardSubheaderTypography = styled(Typography)`
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.234;
+`;

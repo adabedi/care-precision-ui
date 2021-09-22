@@ -2,13 +2,13 @@ import React from 'react';
 import TrendArrow from '../TrendArrow';
 
 import { Label, IconButton } from '../IconButton';
+import {
+  NEWS2Summary,
+  NEWS2SummaryClinicalRisk,
+} from 'types/AssessmentSummary';
 
 const News2Icon: React.FC<{
-  news2: {
-    value: number;
-    clinicalRisk: string | number;
-    trend?: string;
-  };
+  news2: NEWS2Summary;
   isParametr?: Boolean;
   label?: boolean;
 }> = ({ news2, isParametr, label }) => {
@@ -21,31 +21,34 @@ const News2Icon: React.FC<{
 };
 
 export const News2IconBadget: React.FC<{
-  news2: {
-    value: number;
-    clinicalRisk: string | number;
-    trend?: string;
-  };
+  news2: NEWS2Summary;
   isParametr?: Boolean;
   label?: boolean;
 }> = ({ news2, isParametr }) => {
   return <News2 news2={news2} isParametr={isParametr} />;
 };
 const News2: React.FC<{
-  news2: {
-    value: number;
-    clinicalRisk: string | number;
-    trend?: string;
-  };
+  news2: NEWS2Summary;
   isParametr?: Boolean;
 }> = ({ news2, isParametr }) => {
-  const { value, clinicalRisk, trend } = news2;
+  const {
+    score: { totalScore },
+    clinicalRisk,
+    trend,
+  } = news2;
+
+  // const CIRCLE_COLORS_SCORE = {
+  //   at0060: '#F40013',
+  //   at0059: '#FBC384',
+  //   at0058: '#fbf184',
+  //   at0057: '#2E7D32',
+  // };
 
   const CIRCLE_COLORS_SCORE = {
-    at0060: '#F40013',
-    at0059: '#FBC384',
-    at0058: '#fbf184',
-    at0057: '#2E7D32',
+    [NEWS2SummaryClinicalRisk.HIGH]: '#F40013',
+    [NEWS2SummaryClinicalRisk.MEDIUM]: '#FBC384',
+    [NEWS2SummaryClinicalRisk.LOW_MEDIUM]: '#fbf184',
+    [NEWS2SummaryClinicalRisk.LOW]: '#2E7D32',
   };
 
   const CIRCLE_COLORS_PARAMETRS = {
@@ -54,14 +57,16 @@ const News2: React.FC<{
     '1': '#fbf184',
     '0': '#2E7D32',
   };
-  const parametrFont = value === 3 ? '#fff' : '#000';
+  const parametrFont = totalScore === 3 ? '#fff' : '#000';
   const fill = isParametr
     ? CIRCLE_COLORS_PARAMETRS[clinicalRisk]
     : CIRCLE_COLORS_SCORE[clinicalRisk];
   const fontFill = isParametr
     ? parametrFont
-    : clinicalRisk === 'at0060' || clinicalRisk === 'at0057'
-    ? '#fff'
+    : clinicalRisk === NEWS2SummaryClinicalRisk.HIGH ||
+      NEWS2SummaryClinicalRisk.LOW
+    ? // : clinicalRisk === 'at0060' || clinicalRisk === 'at0057' | NEWS2SummaryClinicalRisk
+      '#fff'
     : '#000';
 
   return (
@@ -79,7 +84,7 @@ const News2: React.FC<{
           dy=".3em"
           stroke={fontFill}
         >
-          {value}
+          {totalScore}
         </text>
         {'Sorry, your browser does not support inline SVG.'}
       </svg>

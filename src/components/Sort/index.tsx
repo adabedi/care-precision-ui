@@ -6,7 +6,6 @@ import {
   Select,
   IconButton,
   Radio,
-  RadioGroup,
   FormControlLabel,
 } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -16,59 +15,61 @@ import { SelectItem } from '../SelectItem';
 import Button from '../Button';
 
 import uniqid from 'uniqid';
+import { SortDir, SortKey } from 'app/containers/PatientList/types';
+import { LocationEnum } from 'types/Patient';
 
 const SORT_BY = [
   {
-    id: 'name',
+    id: SortKey.NAME,
     name: 'Name',
   },
   {
-    id: 'birthdate',
+    id: SortKey.BIRTH_DATE,
     name: 'Age',
   },
-  {
-    id: 'news2',
-    name: 'News2',
-  },
-  {
-    id: 'denwis',
-    name: 'DENWIS',
-  },
+  // {
+  //   id: 'news2',
+  //   name: 'News2',
+  // },
+  // {
+  //   id: 'denwis',
+  //   name: 'DENWIS',
+  // },
 ];
 
-const FILTER_SEPSIS = [
-  {
-    id: 'grey',
-    name: 'Grey',
-  },
-  {
-    id: 'amber',
-    name: 'Amber',
-  },
-  {
-    id: 'red',
-    name: 'Red',
-  },
-];
+// const FILTER_SEPSIS = [
+//   {
+//     id: 'grey',
+//     name: 'Grey',
+//   },
+//   {
+//     id: 'amber',
+//     name: 'Amber',
+//   },
+//   {
+//     id: 'red',
+//     name: 'Red',
+//   },
+// ];
 
-const FILTER_COVID = [
-  {
-    id: 'grey',
-    name: 'Grey',
-  },
-  {
-    id: 'green',
-    name: 'Green',
-  },
-  {
-    id: 'amber',
-    name: 'Amber',
-  },
-  {
-    id: 'red',
-    name: 'Red',
-  },
-];
+// const FILTER_COVID = [
+//   {
+//     id: 'grey',
+//     name: 'Grey',
+//   },
+//   {
+//     id: 'green',
+//     name: 'Green',
+//   },
+//   {
+//     id: 'amber',
+//     name: 'Amber',
+//   },
+//   {
+//     id: 'red',
+//     name: 'Red',
+//   },
+// ];
 export const RadioItem: React.FC<{
   value: string;
   label: string;
@@ -85,8 +86,11 @@ interface Props {
   id?: string;
   onFilterSort: any;
   defaultValues: {
-    sort: null | { key: string; value: string };
-    filter: { key: string; value: string };
+    sort: {
+      sortKey: null | SortKey;
+      sortDir: null | SortDir;
+    };
+    location?: LocationEnum;
   };
   sort?: boolean;
   sepsis?: boolean;
@@ -96,67 +100,68 @@ const ACTIVE_BTN = '#29375d';
 const Sort: React.FC<Props> = React.forwardRef(
   ({ id, onFilterSort, defaultValues, sort, sepsis, covid }, ref) => {
     const [state, setState] = React.useState<any>({
-      sort: null,
-      filter: null,
+      sort: {
+        sortKey: SortKey.BIRTH_DATE,
+        sortDir: SortDir.DESC,
+      },
     });
     const [arrows, setArrows] = React.useState({ ASC: '', DESC: '' });
-
     const useEffectOnMount = (effect: React.EffectCallback) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       React.useEffect(effect, []);
     };
     useEffectOnMount(() => {
       setState(defaultValues);
-      if (!defaultValues?.sort?.value) {
+      if (!defaultValues?.sort?.sortDir) {
         setAsc();
       } else {
         setArrows(
-          defaultValues?.sort?.value === 'ASC'
+          defaultValues?.sort?.sortDir === SortDir.ASC
             ? { ASC: ACTIVE_BTN, DESC: '' }
             : { ASC: '', DESC: ACTIVE_BTN },
         );
       }
     });
-    const handleChangeSelect = (
-      e: React.ChangeEvent<HTMLInputElement>,
-    ): void => {
-      const value = e.target.value;
-      const name = e.target.name;
-      setState(oldState => ({
-        ...oldState,
-        filter: {
-          ...oldState.filter,
-          [name]: { key: `${name}`, value },
-        },
-      }));
-    };
+    // const handleChangeSelect = (
+    //   e: React.ChangeEvent<HTMLInputElement>,
+    // ): void => {
+    //   const value = e.target.value;
+    //   const name = e.target.name;
+    //   setState(oldState => ({
+    //     ...oldState,
+    //     filter: {
+    //       ...oldState.filter,
+    //       [name]: { key: `${name}`, value },
+    //     },
+    //   }));
+    // };
 
     const handleChange = event => {
       setState(oldState => ({
         ...oldState,
-        sort: { ...oldState.sort, key: event.target.value },
+        sort: { ...oldState.sort, sortKey: event.target.value },
       }));
     };
     const setOrder = order =>
       setState(oldState => ({
         ...oldState,
-        sort: { ...oldState.sort, value: order },
+        sort: { ...oldState.sort, sortDir: order },
       }));
     const clearOrder = () =>
       setState(oldState => ({
         ...oldState,
-        sort: { value: 'DESC', key: 'news2' },
+        sort: { sortKey: SortKey.NAME, sortDir: SortDir.DESC },
       }));
     const clearFilter = () =>
       setState(oldState => ({ ...oldState, filter: null }));
 
     const setAsc = () => {
       setArrows({ ASC: ACTIVE_BTN, DESC: '' });
-      setOrder('ASC');
+      setOrder(SortDir.ASC);
     };
     const setDesc = e => {
       setArrows({ ASC: '', DESC: ACTIVE_BTN });
-      setOrder('DESC');
+      setOrder(SortDir.DESC);
     };
     const handleFilterSort = e => {
       onFilterSort(state);
@@ -164,19 +169,19 @@ const Sort: React.FC<Props> = React.forwardRef(
     const clearAll = e => {
       clearOrder();
       clearFilter();
-      onFilterSort({ sort: { value: 'DESC', key: 'news2' }, filter: null });
+      onFilterSort({ sort: { sortKey: SortKey.NAME, sortDir: SortDir.DESC } });
     };
-    const clearFilters = name => {
-      setState(oldState => ({
-        ...oldState,
-        filter: {
-          ...oldState.filter,
-          [name]: null,
-        },
-      }));
-    };
-    const clearSepsis = () => clearFilters('sepsis');
-    const clearCovid = () => clearFilters('covid');
+    // const clearFilters = name => {
+    //   setState(oldState => ({
+    //     ...oldState,
+    //     filter: {
+    //       ...oldState.filter,
+    //       [name]: null,
+    //     },
+    //   }));
+    // };
+    // const clearSepsis = () => clearFilters('sepsis');
+    // const clearCovid = () => clearFilters('covid');
 
     return (
       <Box p={1} m={1}>
@@ -192,7 +197,7 @@ const Sort: React.FC<Props> = React.forwardRef(
                 <FormLabel component="legend">Sort by:</FormLabel>
                 <Select
                   native
-                  value={state.sort ? state.sort.key : ''}
+                  value={state.sort.sortKey}
                   onChange={handleChange}
                   inputProps={{
                     name: 'age',
@@ -223,7 +228,7 @@ const Sort: React.FC<Props> = React.forwardRef(
             </Box>
           </Box>
         )}
-        <Box
+        {/* <Box
           width={300}
           display="flex"
           flexDirection="row"
@@ -287,7 +292,7 @@ const Sort: React.FC<Props> = React.forwardRef(
               </Box>
             )}
           </Box>
-        </Box>
+        </Box> */}
 
         <Box display="flex" flexDirection="row-reverse">
           <Box p={1}>

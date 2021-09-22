@@ -1,9 +1,9 @@
-import { tPatientsList } from 'types';
+import { Patient } from 'types/Patient';
 /* --- STATE --- */
 export interface SearchPatientRecord {
   loading: boolean;
   error?: any | null;
-  patientsList: [] | tPatientsList[];
+  patientsList: [] | Patient[];
 }
 
 export type ContainerState = SearchPatientRecord;

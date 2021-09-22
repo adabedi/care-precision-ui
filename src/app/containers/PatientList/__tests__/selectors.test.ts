@@ -35,7 +35,7 @@ describe('GithubRepoForm selectors', () => {
       state = {
         patientsList: {
           ...initialState,
-          filters: { sort: null, filter: null },
+          // filters: { sort: null, filter: null },
         },
       };
     expect(selectors.selectFilters(state)).toEqual(filters);

@@ -1,10 +1,31 @@
-import { tPatientsList } from 'types';
+import { LocationEnum, Patient } from 'types/Patient';
 /* --- STATE --- */
 export interface PatientsList {
   loading: boolean;
   error?: PatientsErrorType | null;
-  patientsList: [] | tPatientsList[];
-  filters: { sort: null | any; filter: null | any };
+  patientsList: [] | Patient[];
+  filters: {
+    sort: {
+      sortKey: null | SortKey;
+      sortDir: null | SortDir;
+    };
+    location?: LocationEnum;
+  };
+  search?: {
+    location?: LocationEnum;
+    name?: string;
+    birthDate?: string;
+  };
+}
+
+export enum SortKey {
+  UUID = 'uuid',
+  NAME = 'name',
+  BIRTH_DATE = 'birth_date',
+}
+export enum SortDir {
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
 export enum PatientsErrorType {

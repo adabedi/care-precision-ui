@@ -18,6 +18,7 @@ import { Box, List, Toolbar, Grid, Typography } from '@material-ui/core';
 import { Card, Record, SortPoper, Sort, Spinner } from 'components';
 import { useStyles } from './styles';
 import Search from '../SearchPatientRecord';
+import { SortDir, SortKey } from './types';
 
 const Records = () => {
   useInjectReducer({ key: sliceKey, reducer });
@@ -32,7 +33,11 @@ const Records = () => {
   const filters = useSelector(selectFilters);
 
   React.useEffect(() => {
-    dispatch(actions.loadRecords({ sort: { value: 'DESC', key: 'news2' } }));
+    dispatch(
+      actions.loadRecords({
+        sort: { sortKey: SortKey.BIRTH_DATE, sortDir: SortDir.DESC },
+      }),
+    );
   }, [dispatch]);
 
   const handleSortFilter = React.useCallback(
@@ -65,7 +70,8 @@ const Records = () => {
           </Grid>
         </Toolbar>
       </div>
-      <Box m={1} mb={8} style={{ marginTop: '50px' }}>
+      <Box mt={6} />
+      <Box m={1} mb={8}>
         {error && <p>{error}</p>}
         {isLoading && <Spinner />}
         {patients?.length > 0 ? (
@@ -74,18 +80,20 @@ const Records = () => {
               {patients.map(
                 ({
                   name,
-                  nhsnumber,
+                  identifier: { nhsNumber, id },
                   birthDate,
                   gender,
                   location,
-                  assessment,
-                  id,
+                  denwis,
+                  covid,
+                  news2,
+                  sepsis,
                 }) => (
                   <Box key={uniqid()}>
                     <Card
                       name={name}
-                      identifier={nhsnumber}
-                      assesments={assessment}
+                      identifier={nhsNumber}
+                      assesments={{ denwis, covid, news2, sepsis }}
                       id={id}
                     >
                       <Record

@@ -3,27 +3,20 @@ import { request } from 'utils/request';
 import { fake, searchByNameOrNhs } from 'utils/fake';
 import { patientListParser, keysToCamel } from 'utils/formatters';
 import { actions } from './slice';
+import { getConfigValue } from 'utils/getConfigValue';
+import { getEnvTruthly } from 'utils/mockRequest';
 
 export function* searchRecord(action) {
   yield delay(500);
 
-  if (
-    (window as any)[
-      `${process.env.NODE_ENV === 'production' ? 'injectedEnv' : '_env_'}`
-    ].REACT_APP_STATIC
-  ) {
-    const patientList = searchByNameOrNhs(
-      patientListParser(keysToCamel(fake.PATIENT_LIST)),
-      action.payload.search,
-    );
-    return yield put(actions.searchRecordsLoaded(patientList));
+  const base = `${getConfigValue('REACT_APP_API')}/patients`;
+
+  if (getEnvTruthly('REACT_APP_STATIC')) {
+    const result = searchByNameOrNhs(fake.PATIENT_LIST, action.payload.search);
+    return yield put(actions.searchRecordsLoaded(result));
   }
 
-  const requestURL = `${
-    (window as any)[
-      `${process.env.NODE_ENV === 'production' ? 'injectedEnv' : '_env_'}`
-    ]['REACT_APP_API']
-  }/meta/demographics/patient_list?${action?.payload?.search}`;
+  const requestURL = `${base}/patient${action?.payload?.search}`;
   try {
     const patientsList = yield call(request, requestURL);
     const formatedPatientList = patientListParser(keysToCamel(patientsList));
