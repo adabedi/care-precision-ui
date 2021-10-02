@@ -18,15 +18,15 @@ import { sessionReducer } from 'redux-react-session';
 // import { sessionSelector } from 'utils/selectors';
 import { useInjectReducer } from 'redux-injectors';
 
-import { AcuityDashboard } from './containers/AcuityDashboard';
-import { Assessment } from './containers/Assessment';
-import { InfectionControl } from './containers/InfectionControl';
+// import { AcuityDashboard } from './containers/AcuityDashboard';
+// import { Assessment } from './containers/Assessment';
+// import { InfectionControl } from './containers/InfectionControl';
 import { NotFoundPage } from 'components/NotFoundPage/Loadable';
 import { PatientList } from './containers/PatientList/';
-import { PatientOveriview2 } from './containers/PatientOverview2';
+import { PatientOveriview } from './containers/PatientOverview';
 import Login from './containers/Login';
-import { TasksList } from './containers/TasksList';
-import { AdminPage } from './containers/Admin';
+// import { TasksList } from './containers/TasksList';
+// import { AdminPage } from './containers/Admin';
 
 import Layout from 'components/Layout';
 
@@ -60,7 +60,7 @@ export function App() {
             username={auth}
             bottomToolBar
           />
-          <ProtectedRoute
+          {/* <ProtectedRoute
             exact
             header="Acuity Dasboard"
             path={process.env.PUBLIC_URL + '/dashboard'}
@@ -93,22 +93,23 @@ export function App() {
             component={InfectionControl}
             authenticated={authenticated}
             username={auth}
-          />
+          /> */}
           <ProtectedRoute
             exact
             path={process.env.PUBLIC_URL + '/patient-overview/:id'}
-            component={PatientOveriview2}
+            component={PatientOveriview}
             newLayout
             authenticated={authenticated}
             username={auth}
           />
-          <ProtectedRoute
+
+          {/* <ProtectedRoute
             exact
             path={process.env.PUBLIC_URL + '/assessment/:id/:tab/:obsType'}
             component={Assessment}
             authenticated={authenticated}
             username={auth}
-          />
+          /> */}
           <LoginPage
             exact
             path={'/login'}

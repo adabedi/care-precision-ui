@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Grid,
   useTheme,
@@ -7,11 +7,11 @@ import {
   Typography,
 } from '@material-ui/core';
 import uniqid from 'uniqid';
-import { Button, Carousel } from 'components';
-import VitalSignsTable from 'app/containers/Assessment/isbarContent/response/VitalSignsTable';
+import { Button, Carousel, VitalSignsTable } from 'components';
 
-import { fake } from 'utils/fake';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { selectNews2 } from 'app/containers/Patient/selectors';
 
 export const CarouselCard = ({ title, onClick, children }) => {
   return (
@@ -46,6 +46,27 @@ export const Monitoring = () => {
   const md = useMediaQuery(theme.breakpoints?.up('lg'));
   const maximize = () => console.log('a');
 
+  const news2 = useSelector(selectNews2);
+
+  const humanVitalSigns = useMemo(
+    () =>
+      news2 ? (
+        <VitalSignsTable news2={news2} flowRate={null} />
+      ) : (
+        <Typography align="center">No results</Typography>
+      ),
+    [news2],
+  );
+  const machineVitalSigns = useMemo(
+    () =>
+      news2 ? (
+        <VitalSignsTable news2={news2} flowRate={null} />
+      ) : (
+        <Typography align="center">No results</Typography>
+      ),
+    [news2],
+  );
+
   return (
     <Box flexDirection="column" p={1} display="flex">
       <Typography
@@ -72,20 +93,7 @@ export const Monitoring = () => {
                     onClick={maximize}
                     title="Latest face to face monitoring vital signs"
                   >
-                    <Box m={2}>
-                      {' '}
-                      <VitalSignsTable
-                        flowRate={null}
-                        news2={{
-                          ...fake.ASSESSMENTS_RESULT.news2.news2.score,
-                          systolicBloodPressure: {
-                            code: 'at0017',
-                            ordinal: 3,
-                            value: '≤90',
-                          },
-                        }}
-                      />
-                    </Box>
+                    <Box m={2}>{humanVitalSigns}</Box>
                   </CarouselCard>
                 </Grid>
 
@@ -94,12 +102,7 @@ export const Monitoring = () => {
                     onClick={maximize}
                     title="Latest machine monitoring vital signs"
                   >
-                    <Box m={2}>
-                      <VitalSignsTable
-                        flowRate={null}
-                        news2={fake.ASSESSMENTS_RESULT.news2.news2.score}
-                      />
-                    </Box>
+                    <Box m={2}>{machineVitalSigns}</Box>
                   </CarouselCard>
                 </Grid>
               </Grid>,
@@ -109,20 +112,14 @@ export const Monitoring = () => {
                 onClick={maximize}
                 title="Latest face to face monitoring vital signs"
               >
-                <VitalSignsTable
-                  flowRate={null}
-                  news2={fake.ASSESSMENTS_RESULT.news2.news2.score}
-                />
+                {humanVitalSigns}
               </CarouselCard>,
 
               <CarouselCard
                 onClick={maximize}
                 title="Latest machine monitoring vital signs"
               >
-                <VitalSignsTable
-                  flowRate={null}
-                  news2={fake.ASSESSMENTS_RESULT.news2.news2.score}
-                />
+                {machineVitalSigns}
               </CarouselCard>,
             ]}
       </Carousel>

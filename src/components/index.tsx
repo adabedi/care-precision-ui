@@ -68,3 +68,5 @@ export {
   News2IconBadget,
   SelectItem,
 };
+
+export * from './VitalSignsTable';

@@ -160,7 +160,7 @@ const Table: React.FC<Props> = ({
             SEPSIS
             <SortPoper
               small
-              icon={<SepsisIconBadget value={{ value: SEPSIS_FLAG }} />}
+              // icon={<SepsisIconBadget value={{ value: SEPSIS_FLAG }} />}
             >
               <Sort
                 onFilterSort={onRequestSort}

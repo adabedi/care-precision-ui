@@ -10,6 +10,7 @@ import {
   Table,
   Paper,
 } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import {
@@ -20,6 +21,12 @@ import {
   CovidIcon,
 } from 'components';
 import styled from 'styled-components';
+import {
+  selectCovid,
+  selectDenwis,
+  selectNews2,
+  selectSepsis,
+} from 'app/containers/Patient/selectors';
 
 const TablePaper = ({ children }) => (
   <Paper
@@ -38,6 +45,12 @@ const TablePaper = ({ children }) => (
 export const AssessmentOverviewPreview = () => {
   const theme = useTheme();
   const md = useMediaQuery(theme.breakpoints?.up('md'));
+
+  const news2 = useSelector(selectNews2);
+  const sepsis = useSelector(selectSepsis);
+  const denwis = useSelector(selectDenwis);
+  const covid = useSelector(selectCovid);
+
   return (
     <Box p={1} display="flex" flexDirection="column">
       <Typography
@@ -89,95 +102,110 @@ export const AssessmentOverviewPreview = () => {
                         <Typography variant="subtitle1">Date:</Typography>
                         <Box mr={1} />
                         <Typography variant="subtitle1">02-06-2021</Typography>
-                      </Box>{' '}
+                      </Box>
                       <Button.Primary variant="contained">
                         View all
                       </Button.Primary>
-                      {/* </Box> */}
                     </Box>
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    <News2Icon
-                      label
-                      news2={{
-                        value: 3,
-                        trend: 'first',
-                        clinicalRisk: 'at0057',
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">
-                    <Box
-                      width="100%"
-                      display="flex"
-                      // flexShrink="1"
-                      flexDirection="column"
-                    >
-                      <Typography variant="body1">
-                        Key Item/ Recommendation1
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation2
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation3
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    <SepsisIcon value={{ value: 'red' }} label />
-                  </TableCell>
-                  <TableCell align="left">
-                    <Box
-                      width="100%"
-                      display="flex"
-                      // flexShrink="1"
-                      flexDirection="column"
-                    >
-                      <Typography variant="body1">
-                        Key Item/ Recommendation1
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation2
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation3
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    <DenwisIcon
-                      label
-                      denwis={{ trend: 'decreasing', value: 14 }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">
-                    <Box
-                      width="100%"
-                      display="flex"
-                      // flexShrink="1"
-                      flexDirection="column"
-                    >
-                      <Typography variant="body1">
-                        Key Item/ Recommendation1
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation2
-                      </Typography>
-                      <Typography variant="body1">
-                        Key Item/ Recommendation3
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                {news2 && (
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      <News2Icon label news2={news2} />
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box width="100%" display="flex" flexDirection="column">
+                        <Typography variant="body1">
+                          Key Item/ Recommendation1
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation2
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation3
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {sepsis && (
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      <SepsisIcon value={sepsis} label />
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box
+                        width="100%"
+                        display="flex"
+                        // flexShrink="1"
+                        flexDirection="column"
+                      >
+                        <Typography variant="body1">
+                          Key Item/ Recommendation1
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation2
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation3
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {denwis && (
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      <DenwisIcon label denwis={denwis} />
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box
+                        width="100%"
+                        display="flex"
+                        // flexShrink="1"
+                        flexDirection="column"
+                      >
+                        <Typography variant="body1">
+                          Key Item/ Recommendation1
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation2
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation3
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {covid && (
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      <CovidIcon label value={covid} />
+                    </TableCell>
+                    <TableCell align="left">
+                      <Box
+                        width="100%"
+                        display="flex"
+                        // flexShrink="1"
+                        flexDirection="column"
+                      >
+                        <Typography variant="body1">
+                          Key Item/ Recommendation1
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation2
+                        </Typography>
+                        <Typography variant="body1">
+                          Key Item/ Recommendation3
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -232,31 +260,10 @@ export const AssessmentOverviewPreview = () => {
                 <TableRow>
                   <TableCell component="th" scope="row" colSpan={2}>
                     <Box display="flex" flexDirection="row">
-                      <CovidIcon
-                        label
-                        value={{
-                          date_isolation_due_to_end: '2020-11-10T22:39:31.826Z',
-                          suspected_covid_status: 'grey',
-                          covid_test_request: {
-                            date: '2020-11-10T22:39:31.826Z',
-                            value: 'EXAMPLE TEXT',
-                          },
-                        }}
-                      />
-
-                      <News2Icon
-                        label
-                        news2={{
-                          value: 3,
-                          trend: 'first',
-                          clinicalRisk: 'at0057',
-                        }}
-                      />
-                      <DenwisIcon
-                        label
-                        denwis={{ trend: 'decreasing', value: 14 }}
-                      />
-                      <SepsisIcon value={{ value: 'red' }} label />
+                      {covid && <CovidIcon label value={covid} />}
+                      {news2 && <News2Icon label news2={news2} />}
+                      {denwis && <DenwisIcon label denwis={denwis} />}
+                      {sepsis && <SepsisIcon value={sepsis} label />}
                     </Box>
                   </TableCell>
                 </TableRow>

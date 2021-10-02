@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import uniqid from 'uniqid';
+import { NEWS2Summary } from 'types/AssessmentSummary';
 
 export const mapCirleParametrColor = score => {
   return {
@@ -66,7 +67,19 @@ const Cell: React.FC<{
   );
 };
 
-const VitalSignsTable = ({ news2, flowRate }) => {
+interface Props {
+  news2: NEWS2Summary;
+  flowRate?: any;
+}
+const VitalSignsTable: React.FC<Props> = ({ news2, flowRate }) => {
+  const {
+    respirationRate,
+    spoScale_1,
+    systolicBloodPressure,
+    pulse,
+    consciousness,
+    temperature,
+  } = news2.score;
   const classes = useStyles();
   return (
     <TableContainer style={{ backgroundColor: '#E0E0E0' }} component={Paper}>
@@ -167,35 +180,35 @@ const VitalSignsTable = ({ news2, flowRate }) => {
         <TableBody>
           <TableRow>
             <Cell
-              ordinal={news2?.respirationRate?.ordinal}
-              value={news2?.respirationRate?.value}
+              ordinal={respirationRate?.ordinal}
+              value={respirationRate?.value}
               units={'bpm'}
             />
             <Cell
-              ordinal={news2?.spoScale_1?.ordinal}
-              value={news2?.spoScale_1?.value}
+              ordinal={spoScale_1?.ordinal}
+              value={spoScale_1?.value}
               units={'%'}
             />
             <Cell ordinal={0} value={flowRate || '-'} units={'l/min'} border />
             <Cell
-              ordinal={news2?.systolicBloodPressure?.ordinal}
-              value={`${news2?.systolicBloodPressure?.value}`}
+              ordinal={systolicBloodPressure?.ordinal}
+              value={`${systolicBloodPressure?.value}`}
               units={'%'}
             />
             <Cell
-              ordinal={news2?.pulse?.ordinal}
-              value={news2?.pulse?.value}
+              ordinal={pulse?.ordinal}
+              value={pulse?.value}
               units={'bpm'}
               border
             />
             <Cell
-              ordinal={news2?.consciousness?.ordinal}
-              value={news2?.consciousness?.value}
+              ordinal={consciousness?.ordinal}
+              value={consciousness.value}
               units={'.'}
             />
             <Cell
-              ordinal={news2?.temperature?.ordinal}
-              value={news2?.temperature?.value}
+              ordinal={temperature.ordinal}
+              value={temperature.value}
               units={'`C'}
               border
             />
@@ -206,4 +219,4 @@ const VitalSignsTable = ({ news2, flowRate }) => {
   );
 };
 
-export default VitalSignsTable;
+export { VitalSignsTable };
