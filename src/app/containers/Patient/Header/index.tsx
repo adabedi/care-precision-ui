@@ -83,11 +83,7 @@ const Header: React.FC<{ title: string; returnTo?: boolean }> = ({
             </Typography>
           </Box>
         </Box>
-        {/* <Box m={1}>
-          <Typography variant={downMd ? 'h6' : 'h4'} display="block" noWrap>
-            {title}
-          </Typography>
-        </Box> */}
+
         {!returnTo && (
           <Box display="flex" flexDirection="column">
             <Box ml={1} display="flex" flexDirection="row">

@@ -1,15 +1,10 @@
-import { IPatient } from 'types/PatientDemographic';
-import { IAssessmentIcons } from 'types/AssessmentIcons';
+import { Patient } from 'types/Patient';
 
 /* --- STATE --- */
 export interface PatientState {
   loading: boolean;
   error?: PatientErrorType | null;
-  patient:
-    | (IPatient & {
-        assessment: IAssessmentIcons;
-      })
-    | null;
+  patient: Patient | null;
 }
 
 export enum PatientErrorType {

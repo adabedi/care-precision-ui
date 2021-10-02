@@ -1,7 +1,8 @@
+import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { patientSaga } from './saga';
-import { PatientState } from './types';
+import { PatientErrorType, PatientState } from './types';
 
 export const initialState: PatientState = {
   patient: null,
@@ -23,10 +24,10 @@ const slice = createSlice({
       state.patient = patient;
       state.loading = false;
     },
-    // patientError(state, action: PayloadAction<PatientListErrorType>) {
-    //   state.error = action.payload;
-    //   state.loading = false;
-    // },
+    patientError(state, action: PayloadAction<PatientErrorType>) {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 

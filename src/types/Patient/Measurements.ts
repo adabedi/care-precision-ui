@@ -5,6 +5,8 @@ export interface Measurements {
   weight: number;
 }
 
+export interface Background extends Omit<Measurements, 'softSigns'> {}
+
 export interface Frailty {
   code: FralityCode;
   value: string;
