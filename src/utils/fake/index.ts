@@ -12,35 +12,49 @@ export const fake = {
   TASKS,
 };
 
+enum ExtendedSortKey {
+  news2,
+  denwis,
+}
+
 export { searchByNameOrNhs };
-// const checkByASC = (a, b, key) => {
-//   if (a.assessment[`${key}`]?.value && !b.assessment[`${key}`]?.value) {
-//     return true;
-//   }
-//   if (!a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
-//     return false;
-//   }
-//   if (a.assessment[`${key}`]?.value && b.assessment[`${key}`]?.value) {
-//     return a.assessment[`${key}`].value > b.assessment[`${key}`].value;
-//   }
-//   return false;
-// };
+const checkByASC = (a, b, key) => {
+  const aAssessment =
+    key === ExtendedSortKey.news2
+      ? a[`${key}`]?.score?.totalScore
+      : a[`${key}`]?.value;
+  const bAssessment =
+    key === ExtendedSortKey.news2
+      ? b[`${key}`]?.score?.totalScore
+      : b[`${key}`]?.value;
 
-// const checkOrder = (a, b, sort) => {
-//   const { key, value } = sort;
-//   const ASC = 'ASC';
-//   const sortedASC = checkByASC(a, b, key);
-//   return value === ASC ? sortedASC : !sortedASC;
-// };
+  if (aAssessment && !bAssessment) {
+    return true;
+  }
+  if (!aAssessment && bAssessment) {
+    return false;
+  }
+  if (aAssessment && bAssessment) {
+    return aAssessment > bAssessment;
+  }
+  return false;
+};
 
-// const sortByAsssessmentValue = (unsorted, sort) =>
-//   unsorted.reduce((sorted, el) => {
-//     let index = 0;
-//     while (index < sorted.length && checkOrder(el, sorted[index], sort))
-//       index++;
-//     sorted.splice(index, 0, el);
-//     return sorted;
-//   }, []);
+const checkOrder = (a, b, sort) => {
+  const { sortKey, sortDir } = sort;
+  const ASC = 'asc';
+  const sortedASC = checkByASC(a, b, sortKey);
+  return sortDir === ASC ? sortedASC : !sortedASC;
+};
+
+const sortByAsssessmentValue = (unsorted, sort) =>
+  unsorted.reduce((sorted, el) => {
+    let index = 0;
+    while (index < sorted.length && checkOrder(el, sorted[index], sort))
+      index++;
+    sorted.splice(index, 0, el);
+    return sorted;
+  }, []);
 
 const checkOrderByAge = (a, b, order) => {
   const sortedASC = a.birthdate > b.birthdate;
@@ -61,25 +75,26 @@ const removePrefix = name => {
   splitedName.shift();
   return splitedName.join(' ');
 };
-const SortByName = unsorted => {
-  return unsorted.sort((a, b) => {
+const sortByName = unsorted =>
+  Array.from(unsorted).sort((a: any, b: any) => {
     const aName = removePrefix(a.name);
     const bName = removePrefix(b.name);
-
-    return aName.localeCompare(bName);
+    return aName.toString().localeCompare(bName);
   });
-};
 
 export const sort = (
   arrayToSort,
-  params: { sortKey: SortKey; sortDir: SortDir },
+  params: { sortKey: SortKey & ExtendedSortKey; sortDir: SortDir },
 ) => {
   const { sortKey, sortDir } = params;
-  // if (key === 'news2' || key === 'denwis') {
-  //   return sortByAsssessmentValue(arrayToSort, params);
-  // }
+  if (sortKey === 'news2' || sortKey === 'denwis') {
+    return sortByAsssessmentValue(
+      arrayToSort.filter(item => item[params.sortKey]),
+      params,
+    );
+  }
   if (sortKey === SortKey.NAME) {
-    const sorted = SortByName(arrayToSort);
+    const sorted = sortByName(arrayToSort);
     return sortDir === SortDir.ASC ? sorted : sorted.reverse();
   }
   if (sortKey === SortKey.BIRTH_DATE) {
@@ -89,25 +104,25 @@ export const sort = (
 };
 
 const filterSepis = (arrayToFiltr, flag) =>
-  arrayToFiltr.filter(el => el?.assessment?.sepsis?.value?.value === flag);
+  arrayToFiltr.filter(el => el?.sepsis?.value === flag);
 
 const filterDenwis = arrayToFiltr =>
-  arrayToFiltr.filter(el => el?.assessment?.denwis?.value?.value > 4);
+  arrayToFiltr.filter(el => el?.denwis?.value > 4);
 
 const filterCovid = (arrayToFiltr, flag) =>
-  arrayToFiltr.filter(
-    el => el?.assessment?.covid?.value?.suspectedCovidStatus === flag,
-  );
+  arrayToFiltr.filter(el => el?.covid?.suspectedCovidStatus === flag);
 
-export const filter = (arrayToFiltr, parmas) => {
-  if (parmas?.sepsis) {
-    return filterSepis(arrayToFiltr, parmas?.sepsis?.value);
+export const applayFilters = (arrayToFiltr, parmas) => {
+  const { filterKey, filterDir } = parmas;
+  const items = JSON.parse(JSON.stringify(arrayToFiltr));
+  if (filterKey === 'sepsis') {
+    return filterSepis(items, filterDir);
   }
-  if (parmas?.denwis) {
-    return filterDenwis(arrayToFiltr);
+  if (filterKey === 'denwis') {
+    return filterDenwis(items);
   }
-  if (parmas?.covid) {
-    return filterCovid(arrayToFiltr, parmas?.covid?.value);
+  if (filterKey === 'covid') {
+    return filterCovid(items, filterDir);
   }
-  return arrayToFiltr;
+  return items;
 };

@@ -14,7 +14,9 @@ import SepsisIcon from '../SepsisIcon';
 import SortPoper from '../SortPoper';
 import CovidIcon from '../CovidIcon';
 import Sort from '../Sort';
+import { getEnvTruthly } from 'utils/mockRequest';
 
+const itsFake = getEnvTruthly('REACT_APP_STATIC');
 type PropsBeforeStyle = {
   active: boolean;
 };
@@ -88,19 +90,28 @@ const Acuity: React.FC<Props> = ({
 
   const createSortHandler = (property, currentOrder) => event => {
     const isAsc = currentOrder === 'asc';
-    const newOrder = isAsc ? 'DESC' : 'ASC';
+    const newOrder = isAsc ? 'desc' : 'asc';
     onRequestSort({
-      sort: { value: newOrder, key: property },
-      filter: null,
+      sort: {
+        sortKey: property,
+        sortDir: newOrder,
+      },
     });
   };
+  console.log(order, orderBy);
 
-  const getCurrentOrder = property =>
-    orderBy === property && order === 'ASC' ? 'asc' : 'desc';
+  const getCurrentOrder = React.useCallback(
+    property => (orderBy === property && order === 'asc' ? 'asc' : 'desc'),
+    [order, orderBy],
+  );
 
-  const SEPSIS_FLAG = filters.filter?.sepsis?.value || 'white';
+  const SEPSIS_FLAG =
+    filters.filter?.filterKey === 'sepsis'
+      ? filters.filter?.filterDir
+      : 'white';
 
-  const COVID_FLAG = filters.filter?.covid?.value || 'white';
+  const COVID_FLAG =
+    filters.filter?.filterKey === 'covid' ? filters.filter?.filterDir : 'white';
   return (
     <TableElement>
       <thead>
@@ -125,6 +136,7 @@ const Acuity: React.FC<Props> = ({
               active={orderBy === 'denwis'}
               direction={getCurrentOrder('denwis')}
               onClick={createSortHandler('denwis', getCurrentOrder('denwis'))}
+              disabled={!itsFake}
             >
               DENWIS
               {true ? (
@@ -174,6 +186,7 @@ const Acuity: React.FC<Props> = ({
               active={orderBy === 'news2'}
               direction={getCurrentOrder('news2')}
               onClick={createSortHandler('news2', getCurrentOrder('news2'))}
+              disabled={!itsFake}
             >
               NEWS2
               {true ? (

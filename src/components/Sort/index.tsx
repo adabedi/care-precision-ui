@@ -7,6 +7,7 @@ import {
   IconButton,
   Radio,
   FormControlLabel,
+  RadioGroup,
 } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -17,6 +18,7 @@ import Button from '../Button';
 import uniqid from 'uniqid';
 import { SortDir, SortKey } from 'app/containers/PatientList/types';
 import { LocationEnum } from 'types/Patient';
+import { getEnvTruthly } from 'utils/mockRequest';
 
 const SORT_BY = [
   {
@@ -27,49 +29,55 @@ const SORT_BY = [
     id: SortKey.BIRTH_DATE,
     name: 'Age',
   },
-  // {
-  //   id: 'news2',
-  //   name: 'News2',
-  // },
-  // {
-  //   id: 'denwis',
-  //   name: 'DENWIS',
-  // },
+  {
+    ...(getEnvTruthly('REACT_APP_STATIC')
+      ? [
+          {
+            id: 'news2',
+            name: 'News2',
+          },
+          {
+            id: 'denwis',
+            name: 'DENWIS',
+          },
+        ]
+      : []),
+  },
 ];
 
-// const FILTER_SEPSIS = [
-//   {
-//     id: 'grey',
-//     name: 'Grey',
-//   },
-//   {
-//     id: 'amber',
-//     name: 'Amber',
-//   },
-//   {
-//     id: 'red',
-//     name: 'Red',
-//   },
-// ];
+const FILTER_SEPSIS = [
+  {
+    id: 'grey',
+    name: 'Grey',
+  },
+  {
+    id: 'amber',
+    name: 'Amber',
+  },
+  {
+    id: 'red',
+    name: 'Red',
+  },
+];
 
-// const FILTER_COVID = [
-//   {
-//     id: 'grey',
-//     name: 'Grey',
-//   },
-//   {
-//     id: 'green',
-//     name: 'Green',
-//   },
-//   {
-//     id: 'amber',
-//     name: 'Amber',
-//   },
-//   {
-//     id: 'red',
-//     name: 'Red',
-//   },
-// ];
+const FILTER_COVID = [
+  {
+    id: 'grey',
+    name: 'Grey',
+  },
+  {
+    id: 'green',
+    name: 'Green',
+  },
+  {
+    id: 'amber',
+    name: 'Amber',
+  },
+  {
+    id: 'red',
+    name: 'Red',
+  },
+];
 export const RadioItem: React.FC<{
   value: string;
   label: string;
@@ -91,6 +99,7 @@ interface Props {
       sortDir: null | SortDir;
     };
     location?: LocationEnum;
+    filter?: { filterKey: string; filterDir: string };
   };
   sort?: boolean;
   sepsis?: boolean;
@@ -100,11 +109,10 @@ const ACTIVE_BTN = '#29375d';
 const Sort: React.FC<Props> = React.forwardRef(
   ({ id, onFilterSort, defaultValues, sort, sepsis, covid }, ref) => {
     const [state, setState] = React.useState<any>({
-      sort: {
-        sortKey: SortKey.BIRTH_DATE,
-        sortDir: SortDir.DESC,
-      },
+      sort: defaultValues.sort,
+      filter: defaultValues?.filter,
     });
+
     const [arrows, setArrows] = React.useState({ ASC: '', DESC: '' });
     const useEffectOnMount = (effect: React.EffectCallback) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,19 +130,13 @@ const Sort: React.FC<Props> = React.forwardRef(
         );
       }
     });
-    // const handleChangeSelect = (
-    //   e: React.ChangeEvent<HTMLInputElement>,
-    // ): void => {
-    //   const value = e.target.value;
-    //   const name = e.target.name;
-    //   setState(oldState => ({
-    //     ...oldState,
-    //     filter: {
-    //       ...oldState.filter,
-    //       [name]: { key: `${name}`, value },
-    //     },
-    //   }));
-    // };
+    const handleChangeSelect = (
+      e: React.ChangeEvent<HTMLInputElement>,
+    ): void => {
+      const value = e.target.value;
+      const name = e.target.name;
+      setState({ ...state, filter: { filterKey: name, filterDir: value } });
+    };
 
     const handleChange = event => {
       setState(oldState => ({
@@ -149,7 +151,6 @@ const Sort: React.FC<Props> = React.forwardRef(
       }));
     const clearOrder = () =>
       setState(oldState => ({
-        ...oldState,
         sort: { sortKey: SortKey.NAME, sortDir: SortDir.DESC },
       }));
     const clearFilter = () =>
@@ -169,19 +170,16 @@ const Sort: React.FC<Props> = React.forwardRef(
     const clearAll = e => {
       clearOrder();
       clearFilter();
-      onFilterSort({ sort: { sortKey: SortKey.NAME, sortDir: SortDir.DESC } });
+      onFilterSort({
+        sort: { sortKey: SortKey.NAME, sortDir: SortDir.DESC },
+        filter: null,
+      });
     };
-    // const clearFilters = name => {
-    //   setState(oldState => ({
-    //     ...oldState,
-    //     filter: {
-    //       ...oldState.filter,
-    //       [name]: null,
-    //     },
-    //   }));
-    // };
-    // const clearSepsis = () => clearFilters('sepsis');
-    // const clearCovid = () => clearFilters('covid');
+    const clearFilters = React.useCallback(() => {
+      setState({ ...state, filter: null });
+    }, [state]);
+    const clearSepsis = () => clearFilters();
+    const clearCovid = () => clearFilters();
 
     return (
       <Box p={1} m={1}>
@@ -206,7 +204,7 @@ const Sort: React.FC<Props> = React.forwardRef(
                 >
                   <SelectItem value="" aria-label="None" />
                   {SORT_BY.map(({ id, name }) => (
-                    <SelectItem key={uniqid()} value={id}>
+                    <SelectItem key={uniqid()} value={id || ''}>
                       {name}
                     </SelectItem>
                   ))}
@@ -228,7 +226,7 @@ const Sort: React.FC<Props> = React.forwardRef(
             </Box>
           </Box>
         )}
-        {/* <Box
+        <Box
           width={300}
           display="flex"
           flexDirection="row"
@@ -248,7 +246,9 @@ const Sort: React.FC<Props> = React.forwardRef(
                   <RadioGroup
                     name={'sepsis'}
                     value={
-                      state.filter?.sepsis ? state.filter.sepsis.value : ''
+                      state.filter?.filterKey === 'sepsis'
+                        ? state.filter?.filterDir
+                        : ''
                     }
                     onChange={handleChangeSelect}
                     row
@@ -274,7 +274,11 @@ const Sort: React.FC<Props> = React.forwardRef(
                   </FormLabel>
                   <RadioGroup
                     name={'covid'}
-                    value={state.filter?.covid ? state.filter.covid.value : ''}
+                    value={
+                      state.filter?.filterKey === 'covid'
+                        ? state.filter?.filterDir
+                        : ''
+                    }
                     onChange={handleChangeSelect}
                     row
                   >
@@ -292,7 +296,7 @@ const Sort: React.FC<Props> = React.forwardRef(
               </Box>
             )}
           </Box>
-        </Box> */}
+        </Box>
 
         <Box display="flex" flexDirection="row-reverse">
           <Box p={1}>

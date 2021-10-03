@@ -10,6 +10,7 @@ export interface PatientsList {
       sortDir: null | SortDir;
     };
     location?: LocationEnum;
+    filter?: { filterKey: string; filterDir: string };
   };
   search?: {
     location?: LocationEnum;

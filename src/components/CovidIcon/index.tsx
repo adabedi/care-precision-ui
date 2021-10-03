@@ -10,7 +10,7 @@ const CovidIcon: React.FC<{ value: any; label?: boolean; small?: boolean }> = ({
   return (
     <IconButton
       onClick={() => console.log('a')}
-      style={{ padding: small ? '0px' : '12px' }}
+      style={{ padding: small ? '0px 0px 0px 5px ' : '12px' }}
     >
       <Covid value={value} />
       {label && <Label>COVID</Label>}

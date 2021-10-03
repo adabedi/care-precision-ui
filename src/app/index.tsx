@@ -18,7 +18,7 @@ import { sessionReducer } from 'redux-react-session';
 // import { sessionSelector } from 'utils/selectors';
 import { useInjectReducer } from 'redux-injectors';
 
-// import { AcuityDashboard } from './containers/AcuityDashboard';
+import { AcuityDashboard } from './containers/AcuityDashboard';
 // import { Assessment } from './containers/Assessment';
 // import { InfectionControl } from './containers/InfectionControl';
 import { NotFoundPage } from 'components/NotFoundPage/Loadable';
@@ -60,7 +60,7 @@ export function App() {
             username={auth}
             bottomToolBar
           />
-          {/* <ProtectedRoute
+          <ProtectedRoute
             exact
             header="Acuity Dasboard"
             path={process.env.PUBLIC_URL + '/dashboard'}
@@ -69,7 +69,7 @@ export function App() {
             username={auth}
             bottomToolBar
           />
-          <ProtectedRoute
+          {/*   <ProtectedRoute
             exact
             header="Tasks List"
             path={process.env.PUBLIC_URL + '/tasks'}

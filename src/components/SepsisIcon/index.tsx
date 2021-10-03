@@ -18,6 +18,7 @@ const useStyles = makeStyles(() => ({
   red: { color: 'red' },
   grey: { color: 'grey' },
   green: { color: 'green' },
+  white: { color: 'white' },
 }));
 
 interface Props {

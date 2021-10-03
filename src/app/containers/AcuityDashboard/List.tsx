@@ -33,8 +33,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import Search from '../SearchPatientRecord';
-
-type Order = 'ASC' | 'DESC';
+import { SortDir } from '../PatientList/types';
+import { applayFilters } from 'utils/fake';
 
 const AcuityList = () => {
   //redux configuration
@@ -58,22 +58,14 @@ const AcuityList = () => {
   const handleOpen = (): void => setOpen(true);
   const handleClose = (): void => setOpen(false);
 
-  const [order, setOrder] = React.useState<Order>('DESC');
-  const [orderBy, setOrderBy] = React.useState<string>('news2');
-
   React.useEffect(() => {
-    dispatch(actions.loadRecords({ sort: { value: 'DESC', key: 'news2' } }));
-  }, [dispatch]);
-
-  React.useEffect(() => {
-    if (
-      (filters?.sort?.value && filters?.sort?.value !== order) ||
-      filters?.sort?.key !== orderBy
-    ) {
-      setOrder(filters?.sort?.value);
-      setOrderBy(filters?.sort?.value);
-    }
-  }, [dispatch, filters, order, orderBy]);
+    handleRequestSort({
+      sort: {
+        sortKey: 'name',
+        sortDir: SortDir.ASC,
+      },
+    });
+  }, []);
 
   const handleRequestSort = React.useCallback(
     newFilters => {
@@ -83,29 +75,12 @@ const AcuityList = () => {
     [dispatch],
   );
 
-  React.useEffect(() => {
-    if (filters?.sort?.value) {
-      setOrder(filters?.sort?.value);
-    }
-    if (filters?.sort?.key) {
-      setOrderBy(filters?.sort?.key);
-    }
-  }, [filters]);
+  // Temporary solution, until backend start accept a
+  //  covid & sepsis filters
 
-  React.useEffect(() => {
-    dispatch(
-      actions.addFilters({
-        sort: { value: order, key: orderBy },
-        filter: null,
-      }),
-    );
-    dispatch(
-      actions.loadRecords({
-        sort: { value: order, key: orderBy },
-        filter: null,
-      }),
-    );
-  }, [dispatch, orderBy, order]);
+  const patientsToDisplay = filters?.filter
+    ? applayFilters(patients, filters.filter)
+    : patients;
 
   return (
     <>
@@ -140,19 +115,20 @@ const AcuityList = () => {
             ) : (
               <Table.Acuity
                 onRequestSort={handleRequestSort}
-                order={filters?.sort?.value}
-                orderBy={filters?.sort?.key}
+                order={filters?.sort?.sortDir}
+                orderBy={filters?.sort?.sortKey}
                 filters={filters}
               >
-                {patients?.length > 0 ? (
-                  patients.map(
+                {patientsToDisplay?.length > 0 ? (
+                  patientsToDisplay.map(
                     ({
                       name,
-                      nhsnumber,
-
+                      identifier: { nhsNumber, id },
                       location,
-                      assessment,
-                      id,
+                      denwis,
+                      covid,
+                      news2,
+                      sepsis,
                     }) => {
                       const redirectToPatientOverview = () =>
                         history.push(`/patient-overview/${id}`);
@@ -173,40 +149,20 @@ const AcuityList = () => {
                                 {name}
                               </Typography>
                               <Typography variant="body1" color="textSecondary">
-                                {nhsnumber}
+                                {nhsNumber}
                               </Typography>
                             </Td>
                             <Td>
-                              {assessment?.denwis?.value && (
-                                <DenwisIcon
-                                  label
-                                  denwis={assessment?.denwis?.value}
-                                />
-                              )}
+                              {denwis && <DenwisIcon label denwis={denwis} />}
                             </Td>
                             <Td>
-                              {assessment?.covid?.value && (
-                                <CovidIcon
-                                  label
-                                  value={assessment?.covid?.value}
-                                />
-                              )}
+                              {covid && <CovidIcon label value={covid} />}
                             </Td>
                             <Td>
-                              {assessment?.sepsis?.value && (
-                                <SepsisIcon
-                                  label
-                                  value={assessment?.sepsis?.value}
-                                />
-                              )}
+                              {sepsis && <SepsisIcon label value={sepsis} />}
                             </Td>
                             <Td>
-                              {assessment?.news2?.value && (
-                                <News2Icon
-                                  label
-                                  news2={assessment?.news2?.value}
-                                />
-                              )}
+                              {news2 && <News2Icon label news2={news2} />}
                             </Td>
                             <Td>Action</Td>
                             <TdLast>
@@ -221,7 +177,7 @@ const AcuityList = () => {
                               open={open}
                               handleClose={handleClose}
                               title={name}
-                              identifier={nhsnumber || ''}
+                              identifier={nhsNumber || ''}
                               id={id || ''}
                             />
                           )}
@@ -240,7 +196,6 @@ const AcuityList = () => {
             )}
           </Box>
         </>
-        {/* )} */}
       </>
     </>
   );

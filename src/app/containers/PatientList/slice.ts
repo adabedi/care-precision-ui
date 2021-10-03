@@ -10,6 +10,7 @@ export const initialState: ContainerState = {
   filters: {
     sort: { sortKey: SortKey.BIRTH_DATE, sortDir: SortDir.DESC },
     location: LocationEnum.BEDROOM,
+    filter: { filterKey: '', filterDir: '' },
   },
 };
 
@@ -32,9 +33,11 @@ const patientsListFromSlice = createSlice({
       state.loading = false;
     },
     addFilters(state, action) {
-      const { sort } = action.payload;
-      state.filters.sort = sort;
-      // state.filters.filter = filter;
+      const { sort = null, filter = null } = action.payload;
+      if (sort) {
+        state.filters.sort = sort;
+      }
+      state.filters.filter = filter;
     },
   },
 });
